@@ -7,7 +7,7 @@ app = Flask(__name__)
 
 # CODE FROM NOTEBOOK FOR CF
 df = pd.read_csv(
-    r"E:\Hoc\Recommender System\steam-recommendation-system\testing_ground\final_dataset1.csv")
+    "E:\Hoc\Recommender System\steam-recommendation-system\testing_ground\final_dataset1.csv")
 user_ratings = df.pivot_table(index=['user_id'], columns=[
                               'appid'], values='rating')
 user_ratings = user_ratings.dropna(thresh=0, axis=1).fillna(0)
@@ -52,7 +52,7 @@ def home():
     top_five = []
     in_lst = [v[0] for v in in_lst]
     for appid in top_ten:
-        if len(top_five) >= 5:
+        if len(top_five) >= 10:
             break
         if appid not in in_lst:
             top_five.append(appid)

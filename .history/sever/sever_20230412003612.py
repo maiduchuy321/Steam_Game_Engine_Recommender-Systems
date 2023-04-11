@@ -52,7 +52,7 @@ def home():
     top_five = []
     in_lst = [v[0] for v in in_lst]
     for appid in top_ten:
-        if len(top_five) >= 5:
+        if len(top_five) >= 10:
             break
         if appid not in in_lst:
             top_five.append(appid)
