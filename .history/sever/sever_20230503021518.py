@@ -2,9 +2,7 @@ from flask import Flask, redirect, url_for, render_template, jsonify, request
 from pprint import pprint
 import pandas as pd
 import numpy as np
-
 from sklearn.metrics.pairwise import cosine_similarity
-
 pd.set_option("display.max_colwidth", 10000)
 app = Flask(__name__)
 
@@ -12,30 +10,24 @@ app = Flask(__name__)
 df = pd.read_csv(
     r"E:\Hoc\Recommender System\steam-recommendation-system\testing_ground\final_dataset1.csv")
 
-# Sử dụng phương pháp pivot_table để tạo một bảng dữ liệu mới, với các chỉ số index là "user_id", 
-# các cột là "appid" và giá trị của bảng là "rating".
+# Sử dụng phương pháp pivot_table để tạo một bảng dữ liệu mới, với các chỉ số index là "user_id", các cột là "appid" và giá trị của bảng là "rating".
 user_ratings = df.pivot_table(index=['user_id'], columns=[
                               'appid'], values='rating')
-
 # Xóa các cột chứa giá trị NaN và thay thế chúng bằng 0.
 user_ratings = user_ratings.dropna(thresh=0, axis=1).fillna(0)
 
-
-# Tính toán ma trận tương đồng (similarity matrix) 
-# của các trò chơi bằng phương pháp tương quan Cosine giữa các cột (trò chơi) 
-
+# Tính toán ma trận tương đồng (similarity matrix) của các trò chơi bằng phương pháp tương quan Pearson giữa các cột (trò chơi) của DataFrame "user_ratings".
+# game_similarity_df =  user_ratings.corr(method='cosine', min_periods=0)
 game_similarity_df = cosine_similarity(user_ratings.T)
-game_similarity_df = pd.DataFrame(game_similarity_df , 
-                                  index=user_ratings.columns, 
-                                  columns=user_ratings.columns)
-
+game_similarity_df = pd.DataFrame(game_similarity_df , index=user_ratings.columns, columns=user_ratings.columns)
 
 endpoint = pd.read_csv(
     "E:\Hoc\Recommender System\steam-recommendation-system\data\endpoint_dataset_final.csv")
 # print(endpoint)
 
-# Hàm để tính toán điểm tương đồng giữa trò chơi "game_name" 
-# và các trò chơi khác dựa trên đánh giá "user_rating" của người dùng.
+# Hàm để tính toán điểm tương đồng giữa trò chơi "game_name" và các trò chơi khác dựa trên đánh giá "user_rating" của người dùng.
+
+
 def get_similar_games(game_name, user_rating):
     similar_score = game_similarity_df[game_name]*(user_rating-2.5)
     similar_score = similar_score.sort_values(ascending=False)
